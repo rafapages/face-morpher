@@ -5,8 +5,4 @@ Triangle::Triangle()
 
 }
 
-Triangle::~Triangle()
-{
-
-}
 

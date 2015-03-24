@@ -1,6 +1,6 @@
 #CFLAGS=-g
 OBJECTS = main.o mesh.o	\
-morpher.o 
+morpher.o camera.o
 
 all: faceMorpher
 

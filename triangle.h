@@ -6,7 +6,7 @@ class Triangle
 {
 public:
     Triangle();
-    ~Triangle();
+
 };
 
 #endif // TRIANGLE_H

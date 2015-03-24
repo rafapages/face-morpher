@@ -3,22 +3,30 @@
 
 #include <eigen3/Eigen/Dense>
 #include <stdio.h>
+#include <vector>
 
-class Triangle;
+#include "triangle.h"
+//class Triangle;
 
 using namespace Eigen;
 
 class Mesh {
 
-public:
+ public:
     Mesh();
     ~Mesh();
 
     // I/O
-    void readOBJ(std::string _fileName);
-    void writeOBJ(std::string _fileName);
+    void readOBJ(const std::string _fileName);
+    void writeOBJ(const std::string _fileName);
 
+    // Data access
+    Vector3f getVector(const unsigned int _index);
+    Triangle getTriangle(const unsigned int _index);
+    void addVector(const Vector3f _vector);
+    void addTriangle(const Triangle _vector);
 
+ private:
     std::vector<Vector3f> vtx_;
     std::vector<Triangle> tri_;
 
