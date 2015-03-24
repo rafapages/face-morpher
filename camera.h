@@ -1,7 +1,7 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include <eigen3/Eigen/Dense>
+#include "mesh.h"
 
 class Camera{
 
@@ -9,11 +9,13 @@ class Camera{
     Camera();
     ~Camera();
 
+    void readCameraParameters(const std::string& _textline);
+
  private:
 
-    Eigen::Matrix3f R_;
-    Eigen::Matrix3f K_;
-    Eigen::Vector3f position_;
+    Matrix3f R_;
+    Matrix3f K_;
+    Vector3f position_;
     unsigned int imWidth, imHeight;
 
 

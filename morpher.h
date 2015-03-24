@@ -1,14 +1,24 @@
 #ifndef MORPHER_H
 #define MORPHER_H
 
-#include "mesh.h"
+#include "camera.h"
 
 class Morpher {
-public:
+ public:
     Morpher();
     ~Morpher();
 
+    // I/O
+    void readCameraFile(const std::string& _fileName);
+
+    // Access data
+    void setFaceMesh(Mesh& _faceMesh);
+
+ private:
+
     Mesh faceMesh_;
+    unsigned int nCam_;
+    std::vector<Camera> cameras_;
 
 };
 

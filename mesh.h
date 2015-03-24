@@ -3,10 +3,11 @@
 
 #include <eigen3/Eigen/Dense>
 #include <stdio.h>
+#include <iostream>
+#include <fstream>
 #include <vector>
 
 #include "triangle.h"
-//class Triangle;
 
 using namespace Eigen;
 
