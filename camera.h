@@ -13,10 +13,10 @@ class Camera{
     void loadCameraParameters(const std::string& _textline);
 
     // Data access
-    Matrix3f getIntrinsicParam();
-    Matrix3f getExtrinsicParam();
-    Vector3f getPosition();
-    Vector2i getImageDim();
+    Matrix3f getIntrinsicParam() const;
+    Matrix3f getExtrinsicParam() const;
+    Vector3f getPosition() const;
+    Vector2i getImageDim() const;
 
  private:
 

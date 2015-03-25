@@ -12,7 +12,7 @@ class Morpher {
     void readCameraFile(const std::string& _fileName);
 
     // Access data
-    void setFaceMesh(Mesh& _faceMesh);
+    void setFaceMesh(const Mesh& _faceMesh);
 
  private:
 

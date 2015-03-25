@@ -54,19 +54,19 @@ void Camera::loadCameraParameters(const std::string &_textline){
 
 }
 
-Matrix3f Camera::getIntrinsicParam(){
+Matrix3f Camera::getIntrinsicParam() const {
     return K_;
 }
 
-Matrix3f Camera::getExtrinsicParam(){
+Matrix3f Camera::getExtrinsicParam() const {
     return R_;
 }
 
-Vector3f Camera::getPosition(){
+Vector3f Camera::getPosition() const {
     return position_;
 }
 
-Vector2i Camera::getImageDim(){
+Vector2i Camera::getImageDim() const {
     const Vector2i dim(imWidth, imHeight);
     return dim;
 }
