@@ -1,16 +1,14 @@
 #include "camera.h"
 
-Camera::Camera()
-{
+Camera::Camera(){
+    imWidth = imHeight = 0;
+}
+
+Camera::~Camera(){
 
 }
 
-Camera::~Camera()
-{
-
-}
-
-void Camera::readCameraParameters(const std::string &_textline){
+void Camera::loadCameraParameters(const std::string &_textline){
 
     std::stringstream line(_textline);
 
@@ -54,6 +52,23 @@ void Camera::readCameraParameters(const std::string &_textline){
 //    std::cerr << this->position_ << std::endl;
 //    std::cerr << "Image: " << this->imWidth << "x" << this->imHeight << std::endl;
 
+}
+
+Matrix3f Camera::getIntrinsicParam(){
+    return K_;
+}
+
+Matrix3f Camera::getExtrinsicParam(){
+    return R_;
+}
+
+Vector3f Camera::getPosition(){
+    return position_;
+}
+
+Vector2i Camera::getImageDim(){
+    const Vector2i dim(imWidth, imHeight);
+    return dim;
 }
 
 

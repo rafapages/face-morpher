@@ -25,7 +25,7 @@ void Morpher::readCameraFile(const std::string &_fileName){
         for ( unsigned int i = 0; i < nCam_ ; i++){
             Camera c;
             std::getline(camFile,line);
-            c.readCameraParameters(line);
+            c.loadCameraParameters(line);
             cameras_.push_back(c);
         }
 
