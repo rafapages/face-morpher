@@ -13,7 +13,6 @@ int main(int argc, char *argv[]){
     m.readOBJ(argv[2]);
     m.writeOBJ("test.obj");
 
-    cout << "Hello World!" << endl;
     return 0;
 }
 
