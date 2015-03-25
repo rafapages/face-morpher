@@ -27,14 +27,12 @@ void Mesh::readOBJ(const std::string& _fileName){
             if (initline.compare("v ") == 0){
                 float a, b, c;
                 sscanf(line.c_str(), "v %f %f %f", &a, &b, &c);
-//                vtx_.push_back(Vector3f(a,b,c));
                 this->addVector(Vector3f(a,b,c));
                 nVtx_++;
             } else if (initline.compare("f ") == 0) {
                 unsigned int a, b, c;
                 sscanf(line.c_str(), "f %d %d %d", &a, &b, &c);
-//                tri_.push_back(Triangle(a,b,c));
-                this->addTriangle(Triangle(a,b,c));
+                this->addTriangle(Triangle(a-1,b-1,c-1)); // OBJ indices start at 1
                 nTri_++;
             } else {
                 // Do nothing by now...
@@ -47,10 +45,38 @@ void Mesh::readOBJ(const std::string& _fileName){
         std::cerr << "Unable to read " << _fileName << " file!" << std::endl;
         exit(-1);
     }
+
+    meshFile.close();
 }
 
 void Mesh::writeOBJ(const std::string& _fileName){
 
+    std::cerr << "Exporting mesh " << _fileName << std::endl;
+
+    std::ofstream outMesh(_fileName.c_str());
+
+    // I should first print a header...
+
+    // Vertices
+    for (unsigned int i = 0; i < nVtx_; i++){
+        const Vector3f current = vtx_[i];
+        outMesh << "v";
+        for (unsigned int j = 0; j < 3; j++){
+            outMesh << " " << current(j);
+        }
+        outMesh << "\n";
+    }
+
+    for (unsigned int i = 0; i < nTri_; i++){
+        const Vector3i current = tri_[i].getIndices();
+        outMesh << "f";
+        for (unsigned int j = 0; j < 3; j++){
+            outMesh << " " << current(j)+1; // OBJ indices start at 1
+        }
+        outMesh << "\n";
+    }
+
+    outMesh.close();
 }
 
 void Mesh::addVector(const Vector3f& _vector){
