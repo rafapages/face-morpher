@@ -1,12 +1,10 @@
 #include "morpher.h"
 
-Morpher::Morpher()
-{
+Morpher::Morpher(){
 
 }
 
-Morpher::~Morpher()
-{
+Morpher::~Morpher(){
 
 }
 
@@ -42,5 +40,11 @@ void Morpher::readCameraFile(const std::string &_fileName){
 
 void Morpher::setFaceMesh(const Mesh &_faceMesh){
     faceMesh_ = _faceMesh;
+}
+
+void Morpher::setFaceMesh(const std::string& _fileName){
+    Mesh m;
+    m.readOBJ(_fileName);
+    faceMesh_ = m;
 }
 
