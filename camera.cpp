@@ -71,5 +71,27 @@ Vector2i Camera::getImageDim() const {
     return dim;
 }
 
+Vector3f Camera::transform2CameraCoord(const Vector3f &_v) const {
+
+    const Vector3f aux = _v - position_;
+    return R_ * aux;
+
+}
+
+Vector3f Camera::transform2TextureCoord(const Vector3f &_v) const {
+
+    const Vector3f aux = transform2CameraCoord(_v);
+    return K_ * aux;
+
+}
+
+Vector2f Camera::transform2uvCoord(const Vector3f &_v) const {
+
+    const Vector3f aux = transform2TextureCoord(_v);
+    // u = p.x/p.z
+    // v = p.y/p.z
+    return Vector2f(aux(0)/aux(2), aux(1)/aux(2));
+}
+
 
 

@@ -14,6 +14,7 @@ class Morpher {
     // Access data
     void setFaceMesh(const Mesh& _faceMesh);
     void setFaceMesh(const std::string& _fileName);
+    Camera getCamera(unsigned int _index);
 
  private:
 

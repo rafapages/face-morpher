@@ -18,6 +18,11 @@ class Camera{
     Vector3f getPosition() const;
     Vector2i getImageDim() const;
 
+    // Coordinates transformations from world coordinates
+    Vector3f transform2CameraCoord(const Vector3f& _v) const;
+    Vector3f transform2TextureCoord(const Vector3f& _v) const;
+    Vector2f transform2uvCoord(const Vector3f& _v) const;
+
  private:
 
     Matrix3f K_; // Intrinsic parameters

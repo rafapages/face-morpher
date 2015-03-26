@@ -48,3 +48,7 @@ void Morpher::setFaceMesh(const std::string& _fileName){
     faceMesh_ = m;
 }
 
+Camera Morpher::getCamera(unsigned int _index){
+    return cameras_[_index];
+}
+
