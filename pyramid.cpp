@@ -32,7 +32,7 @@ Vector3f Pyramid::getBarycenter() const {
     return barycenter_;
 }
 
-
+// THIS METHOD STILL NEEDS TO BE TESTED
 bool Pyramid::getDUVparameters(const Vector3f &_v, Vector3f &_duv){
 
     // In case _v is one og the vertices of the base:

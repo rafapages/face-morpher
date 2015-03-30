@@ -11,17 +11,32 @@ class Morpher {
 
     // I/O
     void readCameraFile(const std::string& _fileName);
+    void readImageList(const std::string& _fileName);
+    void readCPindicesFile(const std::string& _fileName);
+    void readCPcorrespondances(const std::string& _fileName);
 
     // Access data
     void setFaceMesh(const Mesh& _faceMesh);
     void setFaceMesh(const std::string& _fileName);
-    Camera getCamera(unsigned int _index);
+    Camera getCamera(unsigned int _index) const;
+    Pyramid getPyramid(unsigned int _index) const;
+    int getCameraIndex(const std::string& _imageName) const;
+
+    // Get 3D position of a point given
+    // its pixel location in two images
+    Vector3f triangulatePoint(int _cam1index, const Vector2f& _pix1, int _cam2index, const Vector2f& _pix2) const;
 
  private:
 
     Mesh faceMesh_;
     unsigned int nCam_;
     std::vector<Camera> cameras_;
+    std::vector<std::string> imageList_;
+    std::vector<Pyramid> pyramids_;
+    // control points triangulated from images
+    std::vector<Vector3f> controlPoints_;
+    // indices to control points in faceMesh_
+    std::vector<int> faceCPindices_;
 
 };
 
