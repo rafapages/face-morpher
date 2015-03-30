@@ -50,7 +50,6 @@ void Morpher::readImageList(const std::string &_fileName){
         std::string line;
         while (!listFile.eof()){
             std::getline(listFile, line);
-            std::cerr << line << std::endl;
             imageList_.push_back(line);
         }
 
