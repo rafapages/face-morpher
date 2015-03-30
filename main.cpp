@@ -11,8 +11,12 @@ int main(int argc, char *argv[]){
 
     Mesh m;
     m.readOBJ(argv[2]);
+
+    morpher.setFaceMesh(m);
+
     m.writeOBJ("test.obj");
 
     return 0;
 }
+
 

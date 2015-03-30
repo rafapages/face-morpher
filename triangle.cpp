@@ -1,5 +1,9 @@
 #include "triangle.h"
 
+Triangle::Triangle(){
+
+}
+
 Triangle::Triangle(unsigned int _i0, unsigned int _i1, unsigned int _i2){
     i_(0) = _i0;
     i_(1) = _i1;

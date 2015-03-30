@@ -2,6 +2,7 @@
 #define MORPHER_H
 
 #include "camera.h"
+#include "pyramid.h"
 
 class Morpher {
  public:
