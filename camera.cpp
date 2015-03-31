@@ -71,6 +71,41 @@ Vector2i Camera::getImageDim() const {
     return dim;
 }
 
+Vector3f Camera::getTranslationVector() const{
+    return -R_ * position_;
+}
+
+MatrixXf Camera::getXMatrix() const{
+
+    MatrixXf X(4,4);
+    const Vector3f t = getTranslationVector();
+    for (unsigned int i = 0; i < 3; i++){
+        for (unsigned int j = 0; j < 3; j++){
+            X(i,j) = R_(i,j);
+        }
+    }
+
+    for (unsigned int i = 0; i < 3; i++){
+        X(i,3) = t(i);
+        X(3,i) = 0;
+    }
+
+    X(3,3) = 1;
+
+    return X;
+}
+
+MatrixXf Camera::getProjectiveMatrix() const {
+    const MatrixXf X = getXMatrix();
+    MatrixXf Kh(3,4);
+    for (unsigned int i = 0; i < 3; i++){
+        Kh.col(i) = K_.col(i);
+        Kh(i,3) = 0;
+    }
+
+    return Kh*X;
+}
+
 Vector3f Camera::transform2CameraCoord(const Vector3f &_v) const {
 
     const Vector3f aux = _v - position_;

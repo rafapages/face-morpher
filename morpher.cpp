@@ -159,8 +159,24 @@ int Morpher::getCameraIndex(const std::string& _image) const{
 
 Vector3f Morpher::triangulatePoint(int _cam1index, const Vector2f &_pix1, int _cam2index, const Vector2f &_pix2) const {
 
-    // To be filled...
+    // Cameras projection matrices
+    MatrixXf P1,P2;
+    P1 = cameras_[_cam1index].getProjectiveMatrix();
+    P2 = cameras_[_cam2index].getProjectiveMatrix();
 
-    return Vector3f(0,0,0);
+    // The matrix of the system AX=0
+    MatrixXf A(4,4);
+    A.row(0) = _pix1(0) * P1.row(2) - P1.row(0);
+    A.row(1) = _pix1(1) * P1.row(2) - P1.row(1);
+    A.row(2) = _pix2(0) * P2.row(2) - P2.row(0);
+    A.row(3) = _pix2(1) * P2.row(2) - P2.row(1);
+
+    // System is solved using Lagrange multipliers
+    Matrix4f M = A.adjoint() * A;
+    const Vector4f point3Dh = SelfAdjointEigenSolver<Matrix4f>(M).eigenvectors().col(0);
+    // Vertex from homogeneous coordinates
+    const Vector3f point3D (point3Dh(0)/point3Dh(3), point3Dh(1)/point3Dh(3), point3Dh(2)/point3Dh(3));
+    return point3D;
+
 }
 
