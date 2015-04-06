@@ -7,7 +7,7 @@ all: faceMorpher
 
 
 faceMorpher: $(OBJECTS)
-	g++ -o faceMorpher $(OBJECTS) $(CXXFLAGS) -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_objdetect -lfreeimageplus
+	g++ -o faceMorpher $(OBJECTS) $(CXXFLAGS) -lCGAL -lgmp -lmpfr
 
 clean:
 	rm -f *.o 

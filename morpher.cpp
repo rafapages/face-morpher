@@ -94,7 +94,7 @@ void Morpher::readCPcorrespondances(const std::string &_fileName){
 
     std::cerr << "Reading control point correspondaces file...";
 
-    std::ifstream corrFile(_fileName);
+    std::ifstream corrFile(_fileName.c_str());
 
     if (corrFile.is_open()){
 
@@ -146,7 +146,7 @@ Pyramid Morpher::getPyramid(unsigned int _index) const {
 }
 
 int Morpher::getCameraIndex(const std::string& _image) const{
-    int index;
+    int index = -1;
     for (unsigned int i = 0; i < imageList_.size(); i++){
         if (_image.compare(imageList_[i]) == 0){
             index = i;
@@ -155,6 +155,10 @@ int Morpher::getCameraIndex(const std::string& _image) const{
     }
 
     return index;
+}
+
+void Morpher::getControlPoints(std::vector<Vector3f> &_cps) const{
+    _cps = controlPoints_;
 }
 
 Vector3f Morpher::triangulatePoint(int _cam1index, const Vector2f &_pix1, int _cam2index, const Vector2f &_pix2) const {
@@ -172,6 +176,7 @@ Vector3f Morpher::triangulatePoint(int _cam1index, const Vector2f &_pix1, int _c
     A.row(3) = _pix2(1) * P2.row(2) - P2.row(1);
 
     // System is solved using Lagrange multipliers
+    // http://stackoverflow.com/questions/19947772/non-trival-solution-for-ax-0-using-eigen-c
     Matrix4f M = A.adjoint() * A;
     const Vector4f point3Dh = SelfAdjointEigenSolver<Matrix4f>(M).eigenvectors().col(0);
     // Vertex from homogeneous coordinates

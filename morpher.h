@@ -21,6 +21,7 @@ class Morpher {
     Camera getCamera(unsigned int _index) const;
     Pyramid getPyramid(unsigned int _index) const;
     int getCameraIndex(const std::string& _imageName) const;
+    void getControlPoints(std::vector<Vector3f> & _cps) const;
 
     // Get 3D position of a point given
     // its pixel location in two images
