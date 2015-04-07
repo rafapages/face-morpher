@@ -12,6 +12,7 @@ class Mesh {
 
  public:
     Mesh();
+    Mesh(const std::vector<Vector3f>& _vtx, const std::vector<Triangle> _tri);
     ~Mesh();
 
     // I/O

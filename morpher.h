@@ -26,7 +26,7 @@ class Morpher {
     // 2D Delaunay triangulation
     // input: vector with 2D vertices
     // output: vector with triangle indices stored in a Vector3i (int)
-    void performDelaunayTri(const std::vector<Vector2f>& _vtx, std::vector<Vector3i>& _tri);
+    void performDelaunayTri(const std::vector<Vector2f>& _vtx, std::vector<Triangle>& _tri);
 
     // Get 3D position of a point given
     // its pixel location in two images

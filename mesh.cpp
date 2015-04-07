@@ -4,6 +4,13 @@ Mesh::Mesh(){
     nVtx_ = nTri_ = 0;
 }
 
+Mesh::Mesh(const std::vector<Vector3f> &_vtx, const std::vector<Triangle> _tri){
+    vtx_ = _vtx;
+    tri_ = _tri;
+    nVtx_ = _vtx.size();
+    nTri_ = _tri.size();
+}
+
 Mesh::~Mesh(){
 
 }

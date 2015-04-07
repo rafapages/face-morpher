@@ -1,4 +1,15 @@
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Delaunay_triangulation_2.h>
+#include <CGAL/Triangulation_vertex_base_with_info_2.h>
+
 #include "morpher.h"
+
+// CGAL typedefs for 2D Delaunay triangulation
+typedef CGAL::Exact_predicates_inexact_constructions_kernel                 Kernel;
+typedef CGAL::Triangulation_vertex_base_with_info_2<unsigned int, Kernel>   Vb;
+typedef CGAL::Triangulation_data_structure_2<Vb>                            Tds;
+typedef CGAL::Delaunay_triangulation_2<Kernel, Tds>                         Delaunay;
+typedef Kernel::Point_2                                                     Point;
 
 Morpher::Morpher(){
 
@@ -128,7 +139,11 @@ void Morpher::readCPcorrespondances(const std::string &_fileName){
         exit(-1);
     }
 
+    std::vector<Triangle> tris;
+    performDelaunayTri(cps1, tris);
 
+    Mesh m(controlPoints_, tris);
+    m.writeOBJ("test3Ddel.obj");
 
     std::cerr << " done!\n";
     corrFile.close();
@@ -169,8 +184,31 @@ void Morpher::getControlPoints(std::vector<Vector3f> &_cps) const{
     _cps = controlPoints_;
 }
 
-void Morpher::performDelaunayTri(const std::vector<Vector2f> &_vtx, std::vector<Vector3i> &_tri){
+void Morpher::performDelaunayTri(const std::vector<Vector2f> &_vtx, std::vector<Triangle> &_tri){
 
+    std::vector< std::pair<Point,unsigned int> > points;
+    for (unsigned int i = 0; i < _vtx.size(); i++){
+        const Vector2f current = _vtx[i];
+        points.push_back(std::make_pair(Point(current[0], current[1]),i));
+    }
+
+    Delaunay triangulation;
+    triangulation.insert(points.begin(),points.end());
+
+    for(Delaunay::Finite_faces_iterator fit = triangulation.finite_faces_begin();
+        fit != triangulation.finite_faces_end(); ++fit) {
+
+        Delaunay::Face_handle face = fit;
+        Vector3i newtri;
+        for (unsigned int k = 0; k < 3; k++){
+            newtri[k] = face->vertex(k)->info();
+        }
+        const Triangle t(newtri[0], newtri[1], newtri[2]);
+        _tri.push_back(t);
+//        std::cout << "Triangle:\t" << triangulation.triangle(face) << std::endl;
+//        std::cout << "Vertex 0:\t" << triangulation.triangle(face)[0] << std::endl;
+//        std::cout << "Vertex 0:\t" << face->vertex(0)->info() << std::endl;
+    }
 
 
 }
