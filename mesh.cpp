@@ -94,5 +94,13 @@ void Mesh::addTriangle(const Triangle& _triangle){
     tri_.push_back(_triangle);
 }
 
+Vector3f Mesh::getVertex(unsigned int _index) const {
+    return vtx_[_index];
+}
+
+Triangle Mesh::getTriangle(unsigned int _index) const {
+    return tri_[_index];
+}
+
 
 

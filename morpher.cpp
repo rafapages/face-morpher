@@ -89,7 +89,8 @@ void Morpher::readCPindicesFile(const std::string &_fileName){
             std::stringstream ss;
             ss << line;
             ss >> index;
-            faceCPindices_.push_back(index);
+//            faceCPindices_.push_back(index);
+            faceControlPoints_.push_back(faceMesh_.getVertex(index));
         }
 
     } else {
@@ -160,9 +161,6 @@ Camera Morpher::getCamera(unsigned int _index) const {
     return cameras_[_index];
 }
 
-Pyramid Morpher::getPyramid(unsigned int _index) const {
-    return pyramids_[_index];
-}
 
 int Morpher::getCameraIndex(const std::string& _image) const{
     int index = -1;
@@ -180,7 +178,7 @@ void Morpher::getControlPoints(std::vector<Vector3f> &_cps) const{
     _cps = controlPoints_;
 }
 
-void Morpher::performDelaunayTri(const std::vector<Vector2f> &_vtx, std::vector<Triangle> &_tri){
+void Morpher::performDelaunayTri(const std::vector<Vector2f> &_vtx, std::vector<Triangle> &_tri) const{
 
     std::vector< std::pair<Point,unsigned int> > points;
     for (unsigned int i = 0; i < _vtx.size(); i++){
@@ -201,9 +199,7 @@ void Morpher::performDelaunayTri(const std::vector<Vector2f> &_vtx, std::vector<
         }
         const Triangle t(newtri[0], newtri[1], newtri[2]);
         _tri.push_back(t);
-//        std::cout << "Triangle:\t" << triangulation.triangle(face) << std::endl;
-//        std::cout << "Vertex 0:\t" << triangulation.triangle(face)[0] << std::endl;
-//        std::cout << "Vertex 0:\t" << face->vertex(0)->info() << std::endl;
+
     }
 
 
@@ -233,7 +229,35 @@ Vector3f Morpher::triangulatePoint(int _cam1index, const Vector2f &_pix1, int _c
 
 }
 
-Vector3f Morpher::getBarycenter(std::vector<Vector3f> _vtx){
+void Morpher::setPyramids(){
+
+    std::cerr << "Setting transformation pyramids... ";
+    const Vector3f cpBar = getBarycenter(controlPoints_);
+    const Vector3f faceBar = getBarycenter(faceControlPoints_);
+
+    // As many pyramids as triangles previously calculated
+    for (unsigned int i = 0; i < controlTriangles_.size(); i++){
+
+        const Triangle t = controlTriangles_[i];
+        Vector3f cpTriVertices[3];
+        Vector3f faceTriVertices[3];
+        for (unsigned int k = 0; k < 3; k++){
+            cpTriVertices[k] = controlPoints_[t.getIndex(k)];
+            faceTriVertices[k] = faceControlPoints_[t.getIndex(k)];
+        }
+
+        const Pyramid cpPyr(cpTriVertices[0], cpTriVertices[1], cpTriVertices[2], cpBar);
+        controlPointPyramids_.push_back(cpPyr);
+
+        const Pyramid facePyr(faceTriVertices[0], faceTriVertices[1], faceTriVertices[2], faceBar);
+        facePyramids_.push_back(facePyr);
+    }
+
+    std::cerr << "done!\n";
+
+}
+
+Vector3f Morpher::getBarycenter(std::vector<Vector3f> _vtx) const {
 
     Vector3f barycenter(0.0,0.0,0.0);
     for (unsigned int i = 0; i < _vtx.size(); i++){

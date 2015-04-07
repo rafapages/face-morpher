@@ -20,7 +20,7 @@ class Mesh {
     void writeOBJ(const std::string& _fileName);
 
     // Data access
-    Vector3f getVector(unsigned int _index) const;
+    Vector3f getVertex(unsigned int _index) const;
     Triangle getTriangle(unsigned int _index) const;
     void addVector(const Vector3f& _vector);
     void addTriangle(const Triangle& _triangle);

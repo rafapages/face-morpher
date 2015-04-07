@@ -19,21 +19,27 @@ class Morpher {
     void setFaceMesh(const Mesh& _faceMesh);
     void setFaceMesh(const std::string& _fileName);
     Camera getCamera(unsigned int _index) const;
-    Pyramid getPyramid(unsigned int _index) const;
     int getCameraIndex(const std::string& _imageName) const;
     void getControlPoints(std::vector<Vector3f> & _cps) const;
 
     // 2D Delaunay triangulation
     // input: vector with 2D vertices
     // output: vector with triangle indices stored in a Vector3i (int)
-    void performDelaunayTri(const std::vector<Vector2f>& _vtx, std::vector<Triangle>& _tri);
+    void performDelaunayTri(const std::vector<Vector2f>& _vtx, std::vector<Triangle>& _tri) const;
 
     // Get 3D position of a point given
     // its pixel location in two images
     Vector3f triangulatePoint(int _cam1index, const Vector2f& _pix1, int _cam2index, const Vector2f& _pix2) const;
 
+    // Transformation pyramids are set
+    void setPyramids();
+
     // Calculates the barycenter of a set of points
-    Vector3f getBarycenter(std::vector<Vector3f> _vtx);
+    Vector3f getBarycenter(std::vector<Vector3f> _vtx) const;
+
+    // Transforms faceMesh into a new mesh (_mesh) using
+    // the information from the subjects control points
+    void transformFaceMesh(Mesh& _mesh);
 
  private:
 
@@ -41,19 +47,22 @@ class Morpher {
     unsigned int nCam_;
     std::vector<Camera> cameras_;
     std::vector<std::string> imageList_;
-    std::vector<Pyramid> pyramids_;
 
-    // control points triangulated from images
+    // Two sets of pyramids needed for
+    // the transformation
+    std::vector<Pyramid> controlPointPyramids_;
+    std::vector<Pyramid> facePyramids_;
+
+    // Control points triangulated from images
     std::vector<Vector3f> controlPoints_;
+    // Control points in faceMesh_
+    std::vector<Vector3f> faceControlPoints_;
 
-    // indices to the triangulated control points:
+    // Indices to the triangulated control points:
     // these triangles will define the base of every pyramid
     // depending if they are used with control points in
     // subjects face or in the face model.
     std::vector<Triangle> controlTriangles_;
-
-    // indices to control points in faceMesh_
-    std::vector<int> faceCPindices_;
 
 };
 
