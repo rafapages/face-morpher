@@ -96,6 +96,11 @@ void Morpher::readCPcorrespondances(const std::string &_fileName){
 
     std::ifstream corrFile(_fileName.c_str());
 
+    // Vector containing 2D positions of points in cam1
+    // cam1 is the frontal view, so we will perform a
+    // Delaunay triangulation of these points
+    std::vector<Vector2f> cps1;
+
     if (corrFile.is_open()){
 
         std::string line;
@@ -115,12 +120,15 @@ void Morpher::readCPcorrespondances(const std::string &_fileName){
             Vector2f v2(pixx, pixy);
             Vector3f point = triangulatePoint(getCameraIndex(cam1), v1, getCameraIndex(cam2), v2);
             controlPoints_.push_back(point);
+            cps1.push_back(v1);
         }
 
     } else {
         std::cerr << "Unable to open " << _fileName << " file!" << std::endl;
         exit(-1);
     }
+
+
 
     std::cerr << " done!\n";
     corrFile.close();
@@ -159,6 +167,12 @@ int Morpher::getCameraIndex(const std::string& _image) const{
 
 void Morpher::getControlPoints(std::vector<Vector3f> &_cps) const{
     _cps = controlPoints_;
+}
+
+void Morpher::performDelaunayTri(const std::vector<Vector2f> &_vtx, std::vector<Vector3i> &_tri){
+
+
+
 }
 
 Vector3f Morpher::triangulatePoint(int _cam1index, const Vector2f &_pix1, int _cam2index, const Vector2f &_pix2) const {
