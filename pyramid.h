@@ -19,7 +19,11 @@ class Pyramid{
     // a vertex with respect to the pyramid.
     // Returns false if the vertex is not
     // inside the pyramid.
-    bool getDUVparameters(const Vector3f& _v, Vector3f& _uvd);
+    bool getDUVparameters(const Vector3f& _v, Vector3f& _duv);
+
+    // Calculates the position of a 3D point, given
+    // its delta-u-v parameters
+    void get3DpointFromDUV(const Vector3f& _duv, Vector3f& _v);
 
 
  private:

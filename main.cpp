@@ -5,17 +5,26 @@ using namespace std;
 
 int main(int argc, char *argv[]){
 
-    if (argc != 5){
+    if (argc != 6){
         std::cerr << "Wrong number of input parameters!" << std::endl;
-        std::cerr << "Usage: " << argv[0] << " <cameraCalibrationFile> <imageListFile> <controlPointCorrespondances> <controlPointIndices>" << std::endl;
+        std::cerr << "Usage: " << argv[0] << "<faceMesh.obj> <cameraCalibrationFile> <imageListFile> <controlPointCorrespondances> <controlPointIndices>" << std::endl;
         return -1;
     }
 
+    // Reading input files
+    Mesh faceMesh;
+    faceMesh.readOBJ(argv[1]);
+
     Morpher morpher;
-    morpher.readCameraFile(argv[1]);
-    morpher.readImageList(argv[2]);
-    morpher.readCPcorrespondances(argv[3]);
-    morpher.readCPindicesFile(argv[4]);
+    morpher.setFaceMesh(faceMesh);
+
+    morpher.readCameraFile(argv[2]);
+    morpher.readImageList(argv[3]);
+    morpher.readCPcorrespondances(argv[4]);
+    morpher.readCPindicesFile(argv[5]);
+
+    //
+
 
     return 0;
 }

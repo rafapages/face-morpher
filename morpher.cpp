@@ -233,3 +233,13 @@ Vector3f Morpher::triangulatePoint(int _cam1index, const Vector2f &_pix1, int _c
 
 }
 
+Vector3f Morpher::getBarycenter(std::vector<Vector3f> _vtx){
+
+    Vector3f barycenter(0.0,0.0,0.0);
+    for (unsigned int i = 0; i < _vtx.size(); i++){
+        barycenter += _vtx[i];
+    }
+
+    return barycenter / _vtx.size();
+}
+

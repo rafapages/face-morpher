@@ -32,6 +32,9 @@ class Morpher {
     // its pixel location in two images
     Vector3f triangulatePoint(int _cam1index, const Vector2f& _pix1, int _cam2index, const Vector2f& _pix2) const;
 
+    // Calculates the barycenter of a set of points
+    Vector3f getBarycenter(std::vector<Vector3f> _vtx);
+
  private:
 
     Mesh faceMesh_;

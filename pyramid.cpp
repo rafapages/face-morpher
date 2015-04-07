@@ -95,6 +95,13 @@ bool Pyramid::getDUVparameters(const Vector3f &_v, Vector3f &_duv){
 
 }
 
+void Pyramid::get3DpointFromDUV(const Vector3f &_duv, Vector3f &_v){
+
+    const Vector3f C = p0_ + (p1_ - p0_) * _duv[1] + (p2_ - p0_) * _duv[2];
+    _v = barycenter_ + _duv[0] * (C -barycenter_);
+
+}
+
 
 
 
