@@ -139,11 +139,7 @@ void Morpher::readCPcorrespondances(const std::string &_fileName){
         exit(-1);
     }
 
-    std::vector<Triangle> tris;
-    performDelaunayTri(cps1, tris);
-
-    Mesh m(controlPoints_, tris);
-    m.writeOBJ("test3Ddel.obj");
+    performDelaunayTri(cps1, controlTriangles_);
 
     std::cerr << " done!\n";
     corrFile.close();

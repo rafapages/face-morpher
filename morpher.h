@@ -39,8 +39,16 @@ class Morpher {
     std::vector<Camera> cameras_;
     std::vector<std::string> imageList_;
     std::vector<Pyramid> pyramids_;
+
     // control points triangulated from images
     std::vector<Vector3f> controlPoints_;
+
+    // indices to the triangulated control points:
+    // these triangles will define the base of every pyramid
+    // depending if they are used with control points in
+    // subjects face or in the face model.
+    std::vector<Triangle> controlTriangles_;
+
     // indices to control points in faceMesh_
     std::vector<int> faceCPindices_;
 
