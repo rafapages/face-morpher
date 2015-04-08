@@ -47,17 +47,17 @@ bool Pyramid::getDUVparameters(const Vector3f &_v, Vector3f &_duv) const{
     if (_v == p0_){
         _duv(0) = 1;
         _duv(1) = 0;
-        _duv(0) = 0;
+        _duv(2) = 0;
         return true;
     } else if (_v == p1_){
         _duv(0) = 1;
         _duv(1) = 1;
-        _duv(0) = 0;
+        _duv(2) = 0;
         return true;
     } else if (_v == p2_){
         _duv(0) = 1;
         _duv(1) = 0;
-        _duv(0) = 1;
+        _duv(2) = 1;
         return true;
     }
 

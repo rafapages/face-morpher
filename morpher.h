@@ -25,9 +25,9 @@ class Morpher {
     // Transforms faceMesh into a new mesh (_mesh) using
     // the information from the subjects control points
     void transformFaceMesh(Mesh& _mesh);
-    void transformFaceMesh2(Mesh& _mesh);
 
-    // Export pyramidal mesh
+    // Stupid method to test the correct pyramid forming:
+    // Export pyramidalset of meshes
     void exportPyramidalMesh(const std::vector<Pyramid>& _pyrs) const;
 
  private:

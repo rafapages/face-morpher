@@ -278,12 +278,9 @@ void Morpher::setPyramids(){
 
 void Morpher::transformFaceMesh(Mesh &_mesh) {
 
-    Mesh test;
 
     // Transformation pyramids are set
     setPyramids();
-
-//    exportPyramidalMesh(controlPointPyramids_);
 
     // A map to store new vertex indices
     std::map<unsigned int, int> indicesMap;
@@ -291,21 +288,11 @@ void Morpher::transformFaceMesh(Mesh &_mesh) {
         indicesMap[i] = -1;
     }
 
-    //------------------------------------------------------
-    std::ofstream mapa("mapapre.txt");
-    for (unsigned int i = 0; i < faceMesh_.getNVtx(); i++){
-        mapa << i << " es ahora " << indicesMap[i] << std::endl;
-    }
-    mapa.close();
-    //------------------------------------------------------
-
     // for each vertex of FaceMesh
     int newIndex = 0;
     for (unsigned int i = 0; i < faceMesh_.getNVtx(); i++){
         const Vector3f currV = faceMesh_.getVertex(i);
         Vector3f newV(0,0,0);
-
-        bool validV = false;
 
         // for each face pyramid
         for (unsigned int p = 0; p < facePyramids_.size(); p++){
@@ -318,31 +305,16 @@ void Morpher::transformFaceMesh(Mesh &_mesh) {
                 // We get its new coordinates
                 const Pyramid currCPpyr = controlPointPyramids_[p];
                 currCPpyr.get3DpointFromDUV(duv, newV);
-                validV = true;
-//                _mesh.addVector(newV);
-//                test.addVector(currV);
+                _mesh.addVector(newV);
 
                 // We save the new value in our indices map
-//                indicesMap[i] = newIndex;
-//                newIndex++;
-//                break;
+                indicesMap[i] = newIndex;
+                newIndex++;
+                break;
             }
         } // end per face pyramid
-        if (validV){
-            _mesh.addVector(newV);
-            test.addVector(currV);
-            indicesMap[i] = newIndex;
-            newIndex++;
-        }
-    } // end per vertex
 
-    //------------------------------------------------------
-    std::ofstream mapa2("mapapost.txt");
-    for (unsigned int i = 0; i < faceMesh_.getNVtx(); i++){
-        mapa2 << i << " es ahora " << indicesMap[i] << std::endl;
-    }
-    mapa2.close();
-    //------------------------------------------------------
+    } // end per vertex
 
     // for each triangle of FaceMesh we update its indices
     for (unsigned int i = 0; i < faceMesh_.getNTri(); i++){
@@ -362,54 +334,8 @@ void Morpher::transformFaceMesh(Mesh &_mesh) {
         if (!validTri) continue;
         Triangle newTri(newIndices[0], newIndices[1], newIndices[2]);
         _mesh.addTriangle(newTri);
-        test.addTriangle(newTri);
 
     } // end per triangle
-    test.addVector(getBarycenter(faceControlPoints_));
-    test.writeOBJ("testcareto.obj");
-}
-
-void Morpher::transformFaceMesh2(Mesh& _mesh){
-
-    setPyramids();
-
-
-    std::vector<Vector3f> vDUVs(faceMesh_.getNVtx(), Vector3f(0,0,0));
-    std::vector<int> vPyrs(faceMesh_.getNVtx());
-
-    for (unsigned int i = 0; i < faceMesh_.getNVtx(); i++){
-
-        Vector3f currV = faceMesh_.getVertex(i);
-        int pyr = -1;
-
-        for (unsigned int p = 0; p < facePyramids_.size(); p++){
-            Pyramid currP = facePyramids_[p];
-            Vector3f duv(0,0,0);
-            if (currP.getDUVparameters(currV, duv)){
-                pyr = p;
-                vDUVs[i] = duv;
-                break;
-            }
-        }
-        vPyrs[i] = pyr;
-    }
-
-    std::vector<Vector3f> nvs(0);
-
-    for (unsigned int i = 0; i < faceMesh_.getNVtx(); i++){
-        Vector3f newV(0,0,0);
-
-        if (vPyrs[i] != -1){
-            Vector3f duv = vDUVs[i];
-            Pyramid currP = controlPointPyramids_[vPyrs[i]];
-            currP.get3DpointFromDUV(duv, newV);
-            nvs.push_back(newV);
-        }
-    }
-
-    std::vector<Triangle> ts;
-    Mesh m(nvs,ts);
-    m.writeOBJ("transform2.obj");
 
 }
 
@@ -428,9 +354,6 @@ void Morpher::exportPyramidalMesh(const std::vector<Pyramid> &_pyrs) const{
         m.addVector(currP.getBarycenter());
 
         Triangle t1(0,1,2);
-//        Triangle t2(0,3,2);
-//        Triangle t3(3,1,2);
-//        Triangle t4(0,1,3);
         Triangle t2(0,2,3);
         Triangle t3(3,2,1);
         Triangle t4(0,3,1);
@@ -442,11 +365,7 @@ void Morpher::exportPyramidalMesh(const std::vector<Pyramid> &_pyrs) const{
         std::stringstream s;
         s << "pyr" << i << ".obj";
         m.writeOBJ(s.str());
-
-
-
     }
-
 }
 
 
