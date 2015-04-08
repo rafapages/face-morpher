@@ -23,10 +23,4 @@ int Triangle::getIndex(unsigned int _index) const {
     return i_(_index);
 }
 
-//Vector2f Triangle::getUVcoordinates(const Vector3f &_v) const {
-//}
-
-//bool Triangle::isInside(const Vector3f &_v) const {
-//}
-
 

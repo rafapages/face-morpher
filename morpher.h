@@ -22,6 +22,16 @@ class Morpher {
     int getCameraIndex(const std::string& _imageName) const;
     void getControlPoints(std::vector<Vector3f> & _cps) const;
 
+    // Transforms faceMesh into a new mesh (_mesh) using
+    // the information from the subjects control points
+    void transformFaceMesh(Mesh& _mesh);
+    void transformFaceMesh2(Mesh& _mesh);
+
+    // Export pyramidal mesh
+    void exportPyramidalMesh(const std::vector<Pyramid>& _pyrs) const;
+
+ private:
+
     // 2D Delaunay triangulation
     // input: vector with 2D vertices
     // output: vector with triangle indices stored in a Vector3i (int)
@@ -31,17 +41,13 @@ class Morpher {
     // its pixel location in two images
     Vector3f triangulatePoint(int _cam1index, const Vector2f& _pix1, int _cam2index, const Vector2f& _pix2) const;
 
-    // Transformation pyramids are set
-    void setPyramids();
-
     // Calculates the barycenter of a set of points
     Vector3f getBarycenter(std::vector<Vector3f> _vtx) const;
 
-    // Transforms faceMesh into a new mesh (_mesh) using
-    // the information from the subjects control points
-    void transformFaceMesh(Mesh& _mesh);
+    // Transformation pyramids are set
+    void setPyramids();
 
- private:
+
 
     Mesh faceMesh_;
     unsigned int nCam_;

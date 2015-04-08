@@ -12,7 +12,7 @@ typedef CGAL::Delaunay_triangulation_2<Kernel, Tds>                         Dela
 typedef Kernel::Point_2                                                     Point;
 
 Morpher::Morpher(){
-
+    nCam_ = 0;
 }
 
 Morpher::~Morpher(){
@@ -89,7 +89,6 @@ void Morpher::readCPindicesFile(const std::string &_fileName){
             std::stringstream ss;
             ss << line;
             ss >> index;
-//            faceCPindices_.push_back(index);
             faceControlPoints_.push_back(faceMesh_.getVertex(index));
         }
 
@@ -197,7 +196,8 @@ void Morpher::performDelaunayTri(const std::vector<Vector2f> &_vtx, std::vector<
         for (unsigned int k = 0; k < 3; k++){
             newtri[k] = face->vertex(k)->info();
         }
-        const Triangle t(newtri[0], newtri[1], newtri[2]);
+//        const Triangle t(newtri[0], newtri[1], newtri[2]);
+        const Triangle t(newtri[0], newtri[2], newtri[1]);
         _tri.push_back(t);
 
     }
@@ -229,6 +229,21 @@ Vector3f Morpher::triangulatePoint(int _cam1index, const Vector2f &_pix1, int _c
 
 }
 
+Vector3f Morpher::getBarycenter(std::vector<Vector3f> _vtx) const {
+
+    Vector3f barycenter(0.0,0.0,0.0);
+//    for (unsigned int i = 0; i < _vtx.size(); i++){
+//        barycenter += _vtx[i];
+//    }
+
+//    return barycenter / _vtx.size();
+
+    barycenter = _vtx[0] + _vtx[8] + _vtx[5] + _vtx[6];
+    barycenter = barycenter / 4;
+    barycenter = barycenter + (barycenter - _vtx[23])*0.5;
+    return barycenter;
+}
+
 void Morpher::setPyramids(){
 
     std::cerr << "Setting transformation pyramids... ";
@@ -246,9 +261,13 @@ void Morpher::setPyramids(){
             faceTriVertices[k] = faceControlPoints_[t.getIndex(k)];
         }
 
+//        std::cerr << "baseF: V0" << std::endl;
+//        std::cerr << cpTriVertices[0] << " V1\n" << cpTriVertices[1] << " V2\n" << cpTriVertices[2] << std::endl;
         const Pyramid cpPyr(cpTriVertices[0], cpTriVertices[1], cpTriVertices[2], cpBar);
         controlPointPyramids_.push_back(cpPyr);
 
+//        std::cerr << "baseF: V0" << std::endl;
+//        std::cerr << faceTriVertices[0] << " V1\n" << faceTriVertices[1] << " V2\n" << faceTriVertices[2] << std::endl;
         const Pyramid facePyr(faceTriVertices[0], faceTriVertices[1], faceTriVertices[2], faceBar);
         facePyramids_.push_back(facePyr);
     }
@@ -257,13 +276,177 @@ void Morpher::setPyramids(){
 
 }
 
-Vector3f Morpher::getBarycenter(std::vector<Vector3f> _vtx) const {
+void Morpher::transformFaceMesh(Mesh &_mesh) {
 
-    Vector3f barycenter(0.0,0.0,0.0);
-    for (unsigned int i = 0; i < _vtx.size(); i++){
-        barycenter += _vtx[i];
+    Mesh test;
+
+    // Transformation pyramids are set
+    setPyramids();
+
+//    exportPyramidalMesh(controlPointPyramids_);
+
+    // A map to store new vertex indices
+    std::map<unsigned int, int> indicesMap;
+    for (unsigned int i = 0; i < faceMesh_.getNVtx(); i++){
+        indicesMap[i] = -1;
     }
 
-    return barycenter / _vtx.size();
+    //------------------------------------------------------
+    std::ofstream mapa("mapapre.txt");
+    for (unsigned int i = 0; i < faceMesh_.getNVtx(); i++){
+        mapa << i << " es ahora " << indicesMap[i] << std::endl;
+    }
+    mapa.close();
+    //------------------------------------------------------
+
+    // for each vertex of FaceMesh
+    int newIndex = 0;
+    for (unsigned int i = 0; i < faceMesh_.getNVtx(); i++){
+        const Vector3f currV = faceMesh_.getVertex(i);
+        Vector3f newV(0,0,0);
+
+        bool validV = false;
+
+        // for each face pyramid
+        for (unsigned int p = 0; p < facePyramids_.size(); p++){
+            const Pyramid currFacePyr = facePyramids_[p];
+            Vector3f duv(0,0,0);
+
+            // if it belongs to the pyramid
+            if (currFacePyr.getDUVparameters(currV, duv)){
+
+                // We get its new coordinates
+                const Pyramid currCPpyr = controlPointPyramids_[p];
+                currCPpyr.get3DpointFromDUV(duv, newV);
+                validV = true;
+//                _mesh.addVector(newV);
+//                test.addVector(currV);
+
+                // We save the new value in our indices map
+//                indicesMap[i] = newIndex;
+//                newIndex++;
+//                break;
+            }
+        } // end per face pyramid
+        if (validV){
+            _mesh.addVector(newV);
+            test.addVector(currV);
+            indicesMap[i] = newIndex;
+            newIndex++;
+        }
+    } // end per vertex
+
+    //------------------------------------------------------
+    std::ofstream mapa2("mapapost.txt");
+    for (unsigned int i = 0; i < faceMesh_.getNVtx(); i++){
+        mapa2 << i << " es ahora " << indicesMap[i] << std::endl;
+    }
+    mapa2.close();
+    //------------------------------------------------------
+
+    // for each triangle of FaceMesh we update its indices
+    for (unsigned int i = 0; i < faceMesh_.getNTri(); i++){
+        const Vector3i currInd = faceMesh_.getTriangle(i).getIndices();
+        Vector3i newIndices;
+
+        bool validTri = true;
+        for (unsigned int k = 0; k < 3; k++){
+            // In case it's not a transformed triangle
+            if (indicesMap[currInd[k]] == -1){
+                validTri = false;
+                break;
+            }
+            newIndices[k] = indicesMap[currInd[k]];
+        }
+        // if it's not a valid triangle, we skip it
+        if (!validTri) continue;
+        Triangle newTri(newIndices[0], newIndices[1], newIndices[2]);
+        _mesh.addTriangle(newTri);
+        test.addTriangle(newTri);
+
+    } // end per triangle
+    test.addVector(getBarycenter(faceControlPoints_));
+    test.writeOBJ("testcareto.obj");
 }
+
+void Morpher::transformFaceMesh2(Mesh& _mesh){
+
+    setPyramids();
+
+
+    std::vector<Vector3f> vDUVs(faceMesh_.getNVtx(), Vector3f(0,0,0));
+    std::vector<int> vPyrs(faceMesh_.getNVtx());
+
+    for (unsigned int i = 0; i < faceMesh_.getNVtx(); i++){
+
+        Vector3f currV = faceMesh_.getVertex(i);
+        int pyr = -1;
+
+        for (unsigned int p = 0; p < facePyramids_.size(); p++){
+            Pyramid currP = facePyramids_[p];
+            Vector3f duv(0,0,0);
+            if (currP.getDUVparameters(currV, duv)){
+                pyr = p;
+                vDUVs[i] = duv;
+                break;
+            }
+        }
+        vPyrs[i] = pyr;
+    }
+
+    std::vector<Vector3f> nvs(0);
+
+    for (unsigned int i = 0; i < faceMesh_.getNVtx(); i++){
+        Vector3f newV(0,0,0);
+
+        if (vPyrs[i] != -1){
+            Vector3f duv = vDUVs[i];
+            Pyramid currP = controlPointPyramids_[vPyrs[i]];
+            currP.get3DpointFromDUV(duv, newV);
+            nvs.push_back(newV);
+        }
+    }
+
+    std::vector<Triangle> ts;
+    Mesh m(nvs,ts);
+    m.writeOBJ("transform2.obj");
+
+}
+
+void Morpher::exportPyramidalMesh(const std::vector<Pyramid> &_pyrs) const{
+
+
+    for (unsigned int i = 0; i < _pyrs.size(); i++){
+
+        const Pyramid currP = _pyrs[i];
+        Mesh m;
+        Vector3f a,b,c;
+        currP.getBase(a,b,c);
+        m.addVector(a);
+        m.addVector(b);
+        m.addVector(c);
+        m.addVector(currP.getBarycenter());
+
+        Triangle t1(0,1,2);
+//        Triangle t2(0,3,2);
+//        Triangle t3(3,1,2);
+//        Triangle t4(0,1,3);
+        Triangle t2(0,2,3);
+        Triangle t3(3,2,1);
+        Triangle t4(0,3,1);
+        m.addTriangle(t1);
+        m.addTriangle(t2);
+        m.addTriangle(t3);
+        m.addTriangle(t4);
+
+        std::stringstream s;
+        s << "pyr" << i << ".obj";
+        m.writeOBJ(s.str());
+
+
+
+    }
+
+}
+
 

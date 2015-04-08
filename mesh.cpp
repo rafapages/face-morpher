@@ -35,12 +35,10 @@ void Mesh::readOBJ(const std::string& _fileName){
                 float a, b, c;
                 sscanf(line.c_str(), "v %f %f %f", &a, &b, &c);
                 this->addVector(Vector3f(a,b,c));
-                nVtx_++;
             } else if (initline.compare("f ") == 0) {
                 unsigned int a, b, c;
                 sscanf(line.c_str(), "f %d %d %d", &a, &b, &c);
                 this->addTriangle(Triangle(a-1,b-1,c-1)); // OBJ indices start at 1
-                nTri_++;
             } else {
                 // Do nothing by now...
             }
@@ -53,12 +51,11 @@ void Mesh::readOBJ(const std::string& _fileName){
         exit(-1);
     }
 
+    std::cerr << "3D Mesh file " << _fileName << " read with " << nVtx_ << " vertices and " << nTri_ << " triangles." << std::endl;
     meshFile.close();
 }
 
 void Mesh::writeOBJ(const std::string& _fileName){
-
-    std::cerr << "Exporting mesh " << _fileName << std::endl;
 
     std::ofstream outMesh(_fileName.c_str());
 
@@ -83,15 +80,27 @@ void Mesh::writeOBJ(const std::string& _fileName){
         outMesh << "\n";
     }
 
+    std::cerr << "3D mesh file " << _fileName << " exported with " << nVtx_ << " vertices and " << nTri_ << " triangles." << std::endl;
+
     outMesh.close();
 }
 
 void Mesh::addVector(const Vector3f& _vector){
     vtx_.push_back(_vector);
+    nVtx_++;
 }
 
 void Mesh::addTriangle(const Triangle& _triangle){
     tri_.push_back(_triangle);
+    nTri_++;
+}
+
+unsigned int Mesh::getNVtx() const{
+    return nVtx_;
+}
+
+unsigned int Mesh::getNTri() const{
+    return nTri_;
 }
 
 Vector3f Mesh::getVertex(unsigned int _index) const {
@@ -100,6 +109,23 @@ Vector3f Mesh::getVertex(unsigned int _index) const {
 
 Triangle Mesh::getTriangle(unsigned int _index) const {
     return tri_[_index];
+}
+
+Vector3f Mesh::getTriangleNormal(const Vector3f &_a, const Vector3f &_b, const Vector3f &_c){
+
+    Vector3f cp = (_b - _a).cross(_c - _a);
+    return cp.normalized();
+
+}
+
+Vector3f Mesh::getTriangleNormal(unsigned int _index){
+
+    Vector3f vertices[3];
+    for (unsigned int i = 0; i < 3; i++){
+        vertices[i] = vtx_[tri_[_index].getIndex(i)];
+    }
+
+    return getTriangleNormal(vertices[0], vertices[1], vertices[2]);
 }
 
 
