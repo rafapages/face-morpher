@@ -30,6 +30,9 @@ class Camera{
     Vector3f transform2TextureCoord(const Vector3f& _v) const;
     Vector2f transform2uvCoord(const Vector3f& _v) const;
 
+    // Coordinates transformations from uv coordinates
+    Vector3f get3Dpoint(const Vector2f& _p) const;
+
  private:
 
     Matrix3f K_; // Intrinsic parameters

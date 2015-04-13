@@ -1,6 +1,8 @@
 #ifndef MORPHER_H
 #define MORPHER_H
 
+#include <map>
+
 #include "camera.h"
 #include "pyramid.h"
 
@@ -41,6 +43,11 @@ class Morpher {
     // its pixel location in two images
     Vector3f triangulatePoint(int _cam1index, const Vector2f& _pix1, int _cam2index, const Vector2f& _pix2) const;
 
+    // Returns a map with controlPoints_ sorted
+    // by distance to the specified camera, but not
+    // the camera position, but its orientation
+    void sortControlPointsFromCam(unsigned int _camIndex, std::multimap<float, unsigned int>& _distances) const;
+
     // Calculates the barycenter of a set of points
     Vector3f getBarycenter(std::vector<Vector3f> _vtx) const;
 
@@ -53,6 +60,7 @@ class Morpher {
     unsigned int nCam_;
     std::vector<Camera> cameras_;
     std::vector<std::string> imageList_;
+    unsigned int frontCamera_;
 
     // Two sets of pyramids needed for
     // the transformation

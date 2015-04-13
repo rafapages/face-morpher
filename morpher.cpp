@@ -120,6 +120,7 @@ void Morpher::readCPcorrespondances(const std::string &_fileName){
             std::stringstream ss(line);
             std::string cam1;
             ss >> cam1;
+            frontCamera_ = getCameraIndex(cam1);
             float pixx, pixy;
             ss >> pixx;
             ss >> pixy;
@@ -229,14 +230,45 @@ Vector3f Morpher::triangulatePoint(int _cam1index, const Vector2f &_pix1, int _c
 
 }
 
+void Morpher::sortControlPointsFromCam(unsigned int _camIndex, std::multimap<float, unsigned int> & _distances) const{
+
+    const Vector3f camPos = cameras_[_camIndex].getPosition();
+    const Vector2i imDim = cameras_[_camIndex].getImageDim();
+    Vector2f pixcenter;
+    pixcenter[0] = (static_cast<float>(imDim[0])) *0.5;
+    pixcenter[1] = (static_cast<float>(imDim[1])) *0.5;
+
+    Vector3f p3D = cameras_[_camIndex].get3Dpoint(pixcenter);
+    Vector3f axis = (camPos - p3D).normalized();
+
+    // We determine a new axis tracing a ray from the camera
+    // position to the center of the image. Points will be
+    // sorted using their projection to this line.
+    for (unsigned int i = 0; i < controlPoints_.size(); i++){
+        const Vector3f current = p3D - controlPoints_[i];
+        const float dist = (current.dot(axis))/axis.norm();
+        _distances.insert(std::pair<float, unsigned int>(dist, i));
+    }
+
+}
+
 Vector3f Morpher::getBarycenter(std::vector<Vector3f> _vtx) const {
 
     Vector3f barycenter(0.0,0.0,0.0);
-    for (unsigned int i = 0; i < _vtx.size(); i++){
-        barycenter += _vtx[i];
+    std::multimap<float, unsigned int> distances;
+    sortControlPointsFromCam(frontCamera_, distances);
+
+    const unsigned int nPoint2mix = 4;
+    Vector3f midpoint(0.0,0.0,0.0);
+    std::multimap<float, unsigned int>::iterator it = distances.end();
+    it--;
+    for (unsigned int i = 0; i < nPoint2mix; i++){
+        midpoint += _vtx[(*it).second];
+        it--;
     }
 
-    return barycenter / _vtx.size();
+    barycenter = midpoint / 4;
+    return barycenter;
 
 //    barycenter = _vtx[0] + _vtx[8] + _vtx[5] + _vtx[6];
 //    barycenter = barycenter / 4;
@@ -261,13 +293,9 @@ void Morpher::setPyramids(){
             faceTriVertices[k] = faceControlPoints_[t.getIndex(k)];
         }
 
-//        std::cerr << "baseF: V0" << std::endl;
-//        std::cerr << cpTriVertices[0] << " V1\n" << cpTriVertices[1] << " V2\n" << cpTriVertices[2] << std::endl;
         const Pyramid cpPyr(cpTriVertices[0], cpTriVertices[1], cpTriVertices[2], cpBar);
         controlPointPyramids_.push_back(cpPyr);
 
-//        std::cerr << "baseF: V0" << std::endl;
-//        std::cerr << faceTriVertices[0] << " V1\n" << faceTriVertices[1] << " V2\n" << faceTriVertices[2] << std::endl;
         const Pyramid facePyr(faceTriVertices[0], faceTriVertices[1], faceTriVertices[2], faceBar);
         facePyramids_.push_back(facePyr);
     }
@@ -336,6 +364,14 @@ void Morpher::transformFaceMesh(Mesh &_mesh) {
         _mesh.addTriangle(newTri);
 
     } // end per triangle
+
+//    exportPyramidalMesh(facePyramids_);
+    std::vector<Triangle> t(0);
+    Mesh m(faceControlPoints_,t);
+    m.writeOBJ("cara.obj");
+
+    Mesh m2(controlPoints_,t);
+    m2.writeOBJ("CPs.obj");
 
 }
 

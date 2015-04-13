@@ -128,5 +128,15 @@ Vector2f Camera::transform2uvCoord(const Vector3f &_v) const {
     return Vector2f(aux(0)/aux(2), aux(1)/aux(2));
 }
 
+Vector3f Camera::get3Dpoint(const Vector2f &_p) const {
+
+    Matrix3f Kinv = K_.inverse();
+    Matrix3f Rinv = R_.inverse();
+    Vector3f proj3D (_p[0], _p[1], 1);
+
+    Vector3f p3D = Rinv * (Kinv * proj3D) + position_;
+    return p3D;
+}
+
 
 
