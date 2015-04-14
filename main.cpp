@@ -26,7 +26,10 @@ int main(int argc, char *argv[]){
     // Perform the transformation
     Mesh m;
     morpher.transformFaceMesh(m);
-    m.writeOBJ("transformada.obj");
+    std::string meshname(argv[1]);
+    meshname = meshname.substr(0, meshname.size()-4);
+    meshname += "_transformed.obj";
+    m.writeOBJ(meshname);
 
 
     return 0;
