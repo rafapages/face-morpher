@@ -234,6 +234,7 @@ void Morpher::sortControlPointsFromCam(unsigned int _camIndex, std::multimap<flo
 
     const Vector3f camPos = cameras_[_camIndex].getPosition();
     const Vector2i imDim = cameras_[_camIndex].getImageDim();
+
     Vector2f pixcenter;
     pixcenter[0] = (static_cast<float>(imDim[0])) *0.5;
     pixcenter[1] = (static_cast<float>(imDim[1])) *0.5;
@@ -281,6 +282,8 @@ void Morpher::setPyramids(){
     std::cerr << "Setting transformation pyramids... ";
     const Vector3f cpBar = getBarycenter(controlPoints_);
     const Vector3f faceBar = getBarycenter(faceControlPoints_);
+
+//    std::cerr << "1" << std::endl;
 
     // As many pyramids as triangles previously calculated
     for (unsigned int i = 0; i < controlTriangles_.size(); i++){
