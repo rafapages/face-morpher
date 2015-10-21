@@ -1,0 +1,11 @@
+# Compiled files
+*.o
+
+# QtCreator stuff
+*.pro
+*.user
+*.pri
+
+# tmp files
+*~
+*DS_Store

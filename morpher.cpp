@@ -117,6 +117,7 @@ void Morpher::readCPcorrespondances(const std::string &_fileName){
         std::string line;
         while (!corrFile.eof()){
             std::getline(corrFile, line);
+            if (line.empty()) continue;
             std::stringstream ss(line);
             std::string cam1;
             ss >> cam1;
@@ -301,6 +302,7 @@ void Morpher::setPyramids(){
 
         const Pyramid facePyr(faceTriVertices[0], faceTriVertices[1], faceTriVertices[2], faceBar);
         facePyramids_.push_back(facePyr);
+
     }
 
     std::cerr << "done!\n";
