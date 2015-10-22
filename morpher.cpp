@@ -134,6 +134,7 @@ void Morpher::readCPcorrespondances(const std::string &_fileName){
             Vector3f point = triangulatePoint(getCameraIndex(cam1), v1, getCameraIndex(cam2), v2);
             controlPoints_.push_back(point);
             cps1.push_back(v1);
+
         }
 
     } else {
@@ -257,25 +258,25 @@ void Morpher::sortControlPointsFromCam(unsigned int _camIndex, std::multimap<flo
 Vector3f Morpher::getBarycenter(std::vector<Vector3f> _vtx) const {
 
     Vector3f barycenter(0.0,0.0,0.0);
-    std::multimap<float, unsigned int> distances;
-    sortControlPointsFromCam(frontCamera_, distances);
+//    std::multimap<float, unsigned int> distances;
+//    sortControlPointsFromCam(frontCamera_, distances);
 
-    const unsigned int nPoint2mix = 4;
-    Vector3f midpoint(0.0,0.0,0.0);
-    std::multimap<float, unsigned int>::iterator it = distances.end();
-    it--;
-    for (unsigned int i = 0; i < nPoint2mix; i++){
-        midpoint += _vtx[(*it).second];
-        it--;
-    }
+//    const unsigned int nPoint2mix = 4;
+//    Vector3f midpoint(0.0,0.0,0.0);
+//    std::multimap<float, unsigned int>::iterator it = distances.end();
+//    it--;
+//    for (unsigned int i = 0; i < nPoint2mix; i++){
+//        midpoint += _vtx[(*it).second];
+//        it--;
+//    }
 
-    barycenter = midpoint / 4;
-    return barycenter;
-
-//    barycenter = _vtx[0] + _vtx[8] + _vtx[5] + _vtx[6];
-//    barycenter = barycenter / 4;
-//    barycenter = barycenter + (barycenter - _vtx[23])*0.5;
+//    barycenter = midpoint / 4;
 //    return barycenter;
+
+    barycenter = _vtx[0] + _vtx[8] + _vtx[5] + _vtx[6];
+    barycenter = barycenter / 4;
+    barycenter = barycenter + (barycenter - _vtx[23])*0.5;
+    return barycenter;
 }
 
 void Morpher::setPyramids(){
@@ -283,8 +284,6 @@ void Morpher::setPyramids(){
     std::cerr << "Setting transformation pyramids... ";
     const Vector3f cpBar = getBarycenter(controlPoints_);
     const Vector3f faceBar = getBarycenter(faceControlPoints_);
-
-//    std::cerr << "1" << std::endl;
 
     // As many pyramids as triangles previously calculated
     for (unsigned int i = 0; i < controlTriangles_.size(); i++){
@@ -373,7 +372,7 @@ void Morpher::transformFaceMesh(Mesh &_mesh) {
 //    exportPyramidalMesh(facePyramids_);
     std::vector<Triangle> t(0);
     Mesh m(faceControlPoints_,t);
-    m.writeOBJ("cara.obj");
+    m.writeOBJ("face.obj");
 
     Mesh m2(controlPoints_,t);
     m2.writeOBJ("CPs.obj");
