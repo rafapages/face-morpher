@@ -27,8 +27,8 @@ class Mesh {
     unsigned int getNTri() const;
 
     // Triangle normal, normalized
-    Vector3f getTriangleNormal(unsigned int _index);
-    Vector3f getTriangleNormal(const Vector3f& _a, const Vector3f& _b, const Vector3f& _c);
+    Vector3f getTriangleNormal(unsigned int _index) const;
+    Vector3f getTriangleNormal(const Vector3f& _a, const Vector3f& _b, const Vector3f& _c) const;
 
  private:
     std::vector<Vector3f> vtx_;

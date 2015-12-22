@@ -111,14 +111,14 @@ Triangle Mesh::getTriangle(unsigned int _index) const {
     return tri_[_index];
 }
 
-Vector3f Mesh::getTriangleNormal(const Vector3f &_a, const Vector3f &_b, const Vector3f &_c){
+Vector3f Mesh::getTriangleNormal(const Vector3f &_a, const Vector3f &_b, const Vector3f &_c) const{
 
     Vector3f cp = (_b - _a).cross(_c - _a);
     return cp.normalized();
 
 }
 
-Vector3f Mesh::getTriangleNormal(unsigned int _index){
+Vector3f Mesh::getTriangleNormal(unsigned int _index) const{
 
     Vector3f vertices[3];
     for (unsigned int i = 0; i < 3; i++){
