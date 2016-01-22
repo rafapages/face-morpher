@@ -10,8 +10,8 @@ The system takes the following input parameters:
 *	<faceMesh.obj> A 3D model of a generic face.
 *	<cameraCalibrationFile> Calibration matrices of the cameras used.
 *	<imageListFile> List of images used for triangulating facial features.
-*	<controlPointCorrespondances> List of correspondances in the input images 
-*	<controlPointIndices> Indices to the same previous feature points in the generic facial mesh
+*	<controlPointCorrespondances> List of correspondances in the input images. 
+*	<controlPointIndices> Indices to the same previous feature points in the generic facial mesh.
 
 ## Citacion
 If you use this software for scientific purposes, please don’t forget to cite us! Thanks!
