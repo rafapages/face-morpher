@@ -1,6 +1,10 @@
 # Compiled files
 *.o
 
+# build folders
+bin/*
+obj/*
+
 # QtCreator stuff
 *.pro
 *.user
