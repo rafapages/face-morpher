@@ -4,6 +4,10 @@ This project transforms a generic 3D facial model into another one using a perso
 
 [Face Lift Surgery for Reconstructed Virtual Humans] (http://ieeexplore.ieee.org/xpl/articleDetails.jsp?arnumber=6079374&tag=1)
 
+## Build
+
+Navigate to the directory and _make_!
+
 ## Usage
 The system takes the following input parameters:
 
